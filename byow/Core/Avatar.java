@@ -68,7 +68,7 @@ public class Avatar {
     public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld) {
         Room.Position moveP = aP.newP(x, y);
         myWorld[aP.x][aP.y] = floor;
-        if (myWorld[moveP.x][moveP.y].description().equals("wall")) {
+        if (myWorld[moveP.x][moveP.y].description().equals("A cold stone wall")) {
             return;
         }
         tWorld[aP.x][aP.y] = floor;
