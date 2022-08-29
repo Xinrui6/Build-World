@@ -102,6 +102,6 @@ public class Hallway {
      *  */
     private void buildHall(Position p, int xSize, int ySize, TETile[][] tWorld) {
         Room.buildWall(p, xSize, ySize, tWorld);
-        Room.roomFloor(p, xSize, ySize, tWorld, Tileset.FLOOR);
+        Room.roomFloor(p, xSize, ySize, tWorld, Tileset.STONE_FLOOR);
     }
 }

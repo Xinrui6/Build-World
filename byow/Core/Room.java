@@ -50,7 +50,7 @@ public class Room implements Comparable {
         this.p = randomPos();
         this.kuan = randomSize(6, 12);
         this.chang = randomSize(6, 12);
-        this.t = randomTile();
+        this.t = Tileset.STONE_FLOOR;
     }
 
     /**
@@ -108,7 +108,7 @@ public class Room implements Comparable {
             return;
         }
         buildWall(p, max.x, max.y, tWorld);
-        roomFloor(p, max.x, max.y, tWorld, randomTile());
+        roomFloor(p, max.x, max.y, tWorld, Tileset.STONE_FLOOR);
     }
 
     /**
@@ -165,10 +165,10 @@ public class Room implements Comparable {
      * build room's walls
      * */
     protected static void buildWall(Position p, int xSize, int ySize, TETile[][] tWorld) {
-        drawHeng(tWorld, p, xSize, Tileset.WALL);
-        drawHeng(tWorld, p.newP(0, ySize), xSize, Tileset.WALL);
-        drawShu(tWorld, p, ySize, Tileset.WALL);
-        drawShu(tWorld, p.newP(xSize, 0), ySize, Tileset.WALL);
+        drawHeng(tWorld, p, xSize, Tileset.STONE_WALL);
+        drawHeng(tWorld, p.newP(0, ySize), xSize, Tileset.STONE_WALL);
+        drawShu(tWorld, p, ySize, Tileset.STONE_WALL);
+        drawShu(tWorld, p.newP(xSize, 0), ySize, Tileset.STONE_WALL);
     }
 
     /**
@@ -195,13 +195,13 @@ public class Room implements Comparable {
      * ensure hallways floors does not override the rooms' floor
      * */
     private static void stopFloor(TETile[][]tWorld, int x, int y, TETile t) {
-        if (t.equals(Tileset.FLOOR)) {
-            if (tWorld[x][y].equals(Tileset.WALL) || tWorld[x][y].equals(Tileset.NOTHING)) {
+        if (t.equals(Tileset.STONE_FLOOR)) {
+            if (tWorld[x][y].equals(Tileset.STONE_WALL) || tWorld[x][y].equals(Tileset.NOTHING)) {
                 tWorld[x][y] = t;
             }
         } else {
-            if (tWorld[x][y].equals(Tileset.WALL) || tWorld[x][y].equals(Tileset.NOTHING)
-                    || tWorld[x][y].equals(Tileset.FLOOR)) {
+            if (tWorld[x][y].equals(Tileset.STONE_WALL) || tWorld[x][y].equals(Tileset.NOTHING)
+                    || tWorld[x][y].equals(Tileset.STONE_FLOOR)) {
                 tWorld[x][y] = t;
             }
         }
@@ -231,14 +231,11 @@ public class Room implements Comparable {
      * random choose a tile for room
      * */
     private TETile randomTile() {
-        int tileNum = random.nextInt(6);
+        int tileNum = random.nextInt(3);
         return switch (tileNum) {
             case 0 -> Tileset.WATER;
             case 1 -> Tileset.GRASS;
-            case 2 -> Tileset.MOUNTAIN;
-            case 3 -> Tileset.SAND;
-            case 4 -> Tileset.TREE;
-            case 5 -> Tileset.FLOWER;
+            case 2 -> Tileset.SAND;
             default -> Tileset.NOTHING;
         };
     }
