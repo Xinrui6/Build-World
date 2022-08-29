@@ -13,7 +13,8 @@ https://introcs.cs.princeton.edu/java/stdlib/StdDraw.java.html
 2. User can determine the name.  
 3. Using keyboard to control avator to move around;    
 4. A “Heads Up Display” (HUD): Text that describes the tile currently under the mouse pointer.    
-5. To Be Continued...    
+5. Lights off!! You can only see what aroung you.  
+6. To Be Continued...    
 
 ##  Basic Control System :video_game:   
 **MENU**
