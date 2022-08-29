@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Engine {
-    private static final File CWD = new File(System.getProperty("user.dir"));
+    public static final File CWD = new File(System.getProperty("user.dir"));
     private static final File GAMEDir = Loading.join(CWD, "GameDir");
     private static final File NAME = Loading.join(GAMEDir, "name");
     private static final File POSITION = Loading.join(GAMEDir, "Position");

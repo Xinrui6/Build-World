@@ -112,21 +112,27 @@ public class World {
     private void setDoor(TETile[][] tWorld) {
         int x = randomNum(1, width - 1);
         int y = randomNum(1, height - 1);
-        if (isWall(tWorld, x, y)) {
+        if (notCorner(tWorld, x, y)) {
             tWorld[x][y] = Tileset.LOCKED_DOOR;
         } else {
             setDoor(tWorld);
         }
     }
     /**
-     * helper to check if the position is an unaccessible corner
+     * helper to check if the position is an inaccessible corner
      * */
-    private boolean isWall(TETile[][] tWorld, int x, int y) {
-        if (tWorld[x][y].equals(Tileset.WALL)) {
-            if ((tWorld[x][y + 1].equals(Tileset.WALL) && (!tWorld[x][y - 1].equals(Tileset.NOTHING)))) {
-                return false;
+    private boolean notCorner(TETile[][] tWorld, int x, int y) {
+        if (tWorld[x][y].equals(Tileset.STONE_WALL)) {
+            for (int i = x - 1; i <= x + 1; i++) {
+                if (!(tWorld[i][y].equals(Tileset.STONE_WALL) || tWorld[i][y].equals(Tileset.NOTHING))) {
+                    return true;
+                }
             }
-            return !tWorld[x][y + 1].equals(Tileset.NOTHING) || (!tWorld[x][y - 1].equals(Tileset.WALL));
+            for (int j = y - 1; j <= y + 1; j++) {
+                if (!(tWorld[x][j].equals(Tileset.STONE_WALL) || tWorld[x][j].equals(Tileset.NOTHING))) {
+                    return true;
+                }
+            }
         }
         return false;
     }
