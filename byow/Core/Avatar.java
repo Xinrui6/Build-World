@@ -1,6 +1,8 @@
 package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
+
 import java.util.HashMap;
 import java.util.Random;
 
@@ -26,6 +28,7 @@ public class Avatar {
     public Room.Position getaP() {
         return aP;
     }
+
     /**
      * set up avatar position
      * */
@@ -45,6 +48,7 @@ public class Avatar {
         aP = posHelper(aRoom, r);
         floor = tWorld[aP.x][aP.y];
         tWorld[aP.x][aP.y] = Tileset.AVATAR;
+
     }
     /**
      * helper to ensure avatar does not generated in wall
@@ -61,10 +65,10 @@ public class Avatar {
     /**
      * helper ensure the wall can block avatar's movement
      * */
-    public void moveHelper(int x, int y, TETile[][] tWorld) {
+    public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld) {
         Room.Position moveP = aP.newP(x, y);
-
-        if (tWorld[moveP.x][moveP.y].equals(Tileset.WALL)) {
+        myWorld[aP.x][aP.y] = floor;
+        if (myWorld[moveP.x][moveP.y].description().equals("wall")) {
             return;
         }
         tWorld[aP.x][aP.y] = floor;

@@ -1,6 +1,7 @@
 package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
 import java.io.File;
@@ -13,6 +14,7 @@ public class Engine {
     private static final File NAME = Loading.join(GAMEDir, "name");
     private static final File POSITION = Loading.join(GAMEDir, "Position");
     private static final File SEED = Loading.join(GAMEDir, "seed");
+    private static final File MAP = Loading.join(GAMEDir, "map");
     private static final Font titleF = new Font("Monaco", Font.BOLD, 50);
     private static final Font textF = new Font("Monaco", Font.BOLD, 30);
     public static final int WIDTH = 90;
@@ -21,6 +23,7 @@ public class Engine {
     private World world;
     private TETile[][] tWorld;
     private String avatarName;
+
     /**
      * Constructor of an Engine, initial a canvas with background color and size
      * */
@@ -40,11 +43,15 @@ public class Engine {
         manuInteraction();
         titleOfGame();
         ter.renderFrame(tWorld);
+        StdDraw.pause(1000);
+
     }
+
     /**
      * draw the main menu, arrange their position and size
      * */
     private void startGame() {
+
         String s = "No Name for This Game Yet";
         StdDraw.setFont(titleF);
         drawFrame(s, 0.5, 0.65);
@@ -86,6 +93,7 @@ public class Engine {
     private void worldInit() {
         this.world = new World(WIDTH, HEIGHT, RandomUtils.uniform(new Random(), 0, 999999999));
         this.tWorld = world.createRandomWorld(ter, avatarName);
+        Loading.writeObject(MAP, tWorld);
     }
     /**
      * load a generated world and restore the status before last exiting
@@ -235,25 +243,96 @@ public class Engine {
      * set up direction interaction
      * */
     public void interactWithKeyboard() throws IOException {
+        TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
         while (true) {
             mouseInteraction();
             char c = charInput();
             if (c == 'W') {
-                world.newA.moveHelper(0, 1, tWorld);
+                world.newA.moveHelper(0, 1, tWorld, myWorld);
             } else if (c == 'S') {
-                world.newA.moveHelper(0, -1, tWorld);
+                world.newA.moveHelper(0, -1, tWorld, myWorld);
             } else if (c == 'D') {
-                world.newA.moveHelper(1, 0, tWorld);
+                world.newA.moveHelper(1, 0, tWorld, myWorld);
             } else if (c == 'A') {
-                world.newA.moveHelper(-1, 0, tWorld);
+                world.newA.moveHelper(-1, 0, tWorld, myWorld);
             } else if (c == '0') {
                 setPersistence();
                 saveGame();
                 System.exit(0);
             }
+            switchOff(world.newA.getaP());
+            switchOn(world.newA.getaP(), myWorld);
             ter.renderFrame(tWorld);
         }
+    }
+    private void switchOff(Room.Position pos) {
+        int xPos = pos.x;
+        int yPos = pos.y;
+        int xL = xPos - 2;
+        if (xL <= 0) {
+            xL = 1;
+        }
+        int xR = xPos + 2;
+        if (xR >= WIDTH) {
+            xR = WIDTH - 1;
+        }
+        int yU = yPos + 2;
+        if (yU >= HEIGHT) {
+            yU = HEIGHT - 1;
+        }
+        int yD = yPos - 2;
+        if (yD <= 0) {
+            yD = 1;
+        }
+        for (int i = 0; i < WIDTH; i ++) {
+            for (int j = yU; j < HEIGHT; j ++) {
+                tWorld[i][j] = Tileset.NOTHING;
+            }
+        }
+        for (int i = 0; i < WIDTH; i ++) {
+            for (int j = 0; j < yD; j++) {
+                tWorld[i][j] = Tileset.NOTHING;
+            }
+        }
+        for (int i = 0; i < xL; i++) {
+            for (int j = yD; j < yU; j++) {
+                tWorld[i][j] = Tileset.NOTHING;
+            }
+        }
+        for (int i = xR; i < WIDTH; i++) {
+            for (int j = yD; j < yU; j++) {
+                tWorld[i][j] = Tileset.NOTHING;
+            }
+        }
+    }
 
+    private void switchOn(Room.Position pos, TETile[][] myWorld) {
+        int xPos = pos.x;
+        int yPos = pos.y;
+        int xL = xPos - 2;
+        if (xL <= 0) {
+            xL = 1;
+        }
+        int xR = xPos + 2;
+        if (xR >= WIDTH) {
+            xR = WIDTH - 1;
+        }
+        int yU = yPos + 2;
+        if (yU >= HEIGHT) {
+            yU = HEIGHT - 1;
+        }
+        int yD = yPos - 2;
+        if (yD <= 0) {
+            yD = 1;
+        }
+
+        for (int i = xL; i <= xR; i++) {
+            for (int j = yD; j <= yU; j++) {
+                if (!(i == xPos && j == yPos)) {
+                tWorld[i][j] = myWorld[i][j];
+                }
+            }
+        }
     }
     /**
      * set up mouse interaction
