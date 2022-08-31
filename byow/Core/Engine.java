@@ -27,17 +27,25 @@ public class Engine {
     /**
      * Constructor of an Engine, initial a canvas with background color and size
      * */
-    public Engine() {
+    public Engine() throws IOException {
         StdDraw.setCanvasSize(WIDTH * 16, HEIGHT * 16);
         StdDraw.clear(Color.BLACK);
         StdDraw.setXscale(0, WIDTH);
         StdDraw.setYscale(0, HEIGHT);
         engineInit();
     }
+    public Engine(String name) throws IOException {
+
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        newInit(name);
+
+    }
     /** Initialize the engine,
      * enable the input with keyboard
      * draw the main menu and title*/
-    private void engineInit() {
+    private void engineInit() throws IOException {
         StdDraw.enableDoubleBuffering();
         startGame();
         manuInteraction();
@@ -98,10 +106,12 @@ public class Engine {
     /**
      * load a generated world and restore the status before last exiting
      * */
-    private void loadInit(long seed, int x, int y){
+    private void loadInit(long seed, int x, int y)  {
         this.world = new World(WIDTH, HEIGHT, seed);
         this.tWorld = world.createRandomWorld(ter, avatarName);
         world.newA.setPos(new Room.Position(x, y), tWorld);
+
+
     }
     /**
      * interaction based on the input char
@@ -109,7 +119,7 @@ public class Engine {
      * L for load a game
      * Q for quiting
      * */
-    private void manuInteraction() {
+    private void manuInteraction() throws IOException {
         while (true) {
             if (charInput() == 'N') {
                 StdDraw.clear(Color.BLACK);
@@ -125,7 +135,6 @@ public class Engine {
                 int x = Integer.parseInt(pos.substring(0, 2));
                 int y = Integer.parseInt(pos.substring(2, 4));
                 loadInit(seed, x, y);
-
                 break;
             } else if (charInput() == 'Q') {
                 System.exit(0);
@@ -204,12 +213,18 @@ public class Engine {
     /**
      * helper for all text drawing except name
      * */
-    private void drawFrame(String s, double xPos, double yPos) {
+    private static void drawFrame(String s, double xPos, double yPos) {
         StdDraw.setPenColor(Color.ORANGE);
         StdDraw.text(WIDTH * xPos, HEIGHT * yPos, s);
         StdDraw.show();
     }
+    public static void keyFrame(Boolean hasKey) {
+        if (hasKey) {
 
+            drawFrame("key", 0.5,0.9);
+            StdDraw.show();
+        }
+    }
     /**
      * convert x or y position into two numbers by add 0 before it
      * */
@@ -244,6 +259,9 @@ public class Engine {
      * */
     public void interactWithKeyboard() throws IOException {
         TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
+
+        //switchOff(world.newA.getaP());
+        ter.renderFrame(tWorld);
         while (true) {
             mouseInteraction();
             char c = charInput();
@@ -260,8 +278,8 @@ public class Engine {
                 saveGame();
                 System.exit(0);
             }
-            switchOff(world.newA.getaP());
-            switchOn(world.newA.getaP(), myWorld);
+            //switchOff(world.newA.getaP());
+            //switchOn(world.newA.getaP(), myWorld);
             ter.renderFrame(tWorld);
         }
     }
@@ -333,6 +351,16 @@ public class Engine {
                 }
             }
         }
+    }
+
+
+    private void newInit(String name) throws IOException {
+        avatarName = name;
+        this.world = new World(WIDTH, HEIGHT, RandomUtils.uniform(new Random(), 0, 99999999));
+        this.tWorld = world.createRandomWorld(ter, name);
+        Loading.writeObject(MAP, this.tWorld);
+        interactWithKeyboard();
+
     }
     /**
      * set up mouse interaction

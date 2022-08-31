@@ -3,6 +3,7 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -10,6 +11,7 @@ public class Avatar {
     private String name;
     private Room.Position aP;
     private TETile floor;
+    private boolean hasKey;
     /**
      * Constructor of an avatar
      * @param name entered by player
@@ -21,6 +23,7 @@ public class Avatar {
         this.aP = null;
         this.floor = null;
         posInit(tWorld, r, m);
+        hasKey = true;
     }
     /**
      * get avatar's position
@@ -65,15 +68,26 @@ public class Avatar {
     /**
      * helper ensure the wall can block avatar's movement
      * */
-    public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld) {
+    public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld) throws IOException {
         Room.Position moveP = aP.newP(x, y);
         myWorld[aP.x][aP.y] = floor;
         if (myWorld[moveP.x][moveP.y].description().equals("A cold stone wall")) {
             return;
         }
+        if (myWorld[moveP.x][moveP.y].description().equals("locked door")) {
+            Engine e = new Engine(name);
+            hasKey = false;
+        }
+        if (myWorld[moveP.x][moveP.y].character() == 'k') {
+            hasKey = true;
+            tWorld[moveP.x][moveP.y] = floor;
+            Engine.keyFrame(hasKey);
+        } else {
         tWorld[aP.x][aP.y] = floor;
         aP = moveP;
         floor = tWorld[moveP.x][moveP.y];
         tWorld[moveP.x][moveP.y] = Tileset.AVATAR;
+        }
     }
+
 }

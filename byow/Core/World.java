@@ -118,6 +118,8 @@ public class World {
             setDoor(tWorld);
         }
     }
+
+
     /**
      * helper to check if the position is an inaccessible corner
      * */
