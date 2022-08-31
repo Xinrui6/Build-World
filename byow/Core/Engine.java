@@ -59,7 +59,6 @@ public class Engine {
      * draw the main menu, arrange their position and size
      * */
     private void startGame() {
-
         String s = "No Name for This Game Yet";
         StdDraw.setFont(titleF);
         drawFrame(s, 0.5, 0.65);
@@ -259,27 +258,27 @@ public class Engine {
      * */
     public void interactWithKeyboard() throws IOException {
         TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
-
-        //switchOff(world.newA.getaP());
+        switchOff(world.newA.getaP());
         ter.renderFrame(tWorld);
+
         while (true) {
             mouseInteraction();
             char c = charInput();
             if (c == 'W') {
-                world.newA.moveHelper(0, 1, tWorld, myWorld);
+                world.newA.moveHelper(0, 1, tWorld, myWorld, 'W');
             } else if (c == 'S') {
-                world.newA.moveHelper(0, -1, tWorld, myWorld);
+                world.newA.moveHelper(0, -1, tWorld, myWorld, 'S');
             } else if (c == 'D') {
-                world.newA.moveHelper(1, 0, tWorld, myWorld);
+                world.newA.moveHelper(1, 0, tWorld, myWorld, 'D');
             } else if (c == 'A') {
-                world.newA.moveHelper(-1, 0, tWorld, myWorld);
+                world.newA.moveHelper(-1, 0, tWorld, myWorld, 'A');
             } else if (c == '0') {
                 setPersistence();
                 saveGame();
                 System.exit(0);
             }
-            //switchOff(world.newA.getaP());
-            //switchOn(world.newA.getaP(), myWorld);
+            switchOff(world.newA.getaP());
+            switchOn(world.newA.getaP(), myWorld);
             ter.renderFrame(tWorld);
         }
     }

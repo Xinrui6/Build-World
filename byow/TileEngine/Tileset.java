@@ -21,7 +21,21 @@ import java.nio.file.Paths;
 public class Tileset {
     public static final File CWD = new File(System.getProperty("user.dir"));
 
-    public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "You");
+    // avatar
+    public static final TETile AVATAR_UP_L = new TETile('l', Color.white, Color.black, "You", join(CWD, "/Assets/upL.png").getPath());
+    public static final TETile AVATAR_UP_R = new TETile('r', Color.white, Color.black, "You", join(CWD, "/Assets/upR.png").getPath());
+    public static final TETile AVATAR_DOWN_S = new TETile('@', Color.white, Color.black, "You", join(CWD, "/Assets/downS.png").getPath());
+    public static final TETile AVATAR_DOWN_L = new TETile('l', Color.white, Color.black, "You", join(CWD, "/Assets/downL.png").getPath());
+    public static final TETile AVATAR_DOWN_R = new TETile('r', Color.white, Color.black, "You", join(CWD, "/Assets/downR.png").getPath());
+    public static final TETile AVATAR_LEFT_L = new TETile('l', Color.white, Color.black, "You", join(CWD, "/Assets/leftL.png").getPath());
+    public static final TETile AVATAR_LEFT_R = new TETile('r', Color.white, Color.black, "You", join(CWD, "/Assets/leftR.png").getPath());
+    public static final TETile AVATAR_RIGHT_L = new TETile('l', Color.white, Color.black, "You", join(CWD, "/Assets/rightL.png").getPath());
+    public static final TETile AVATAR_RIGHT_R = new TETile('r', Color.white, Color.black, "You", join(CWD, "/Assets/rightR.png").getPath());
+
+
+
+
+    // texture
     public static final TETile STONE_WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
             "A cold stone wall", join(CWD, "/Assets/stoneWall3.png").getPath());
     public static final TETile STONE_FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
@@ -37,6 +51,11 @@ public class Tileset {
     public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand", join(CWD, "/Assets/Sand2.png").getPath());
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
+
+    // keys
+    public static final TETile goldenKey = new TETile('k', Color.green, Color.black, "A shinning golden key", join(CWD, "/Assets/goldenKey.png").getPath());
+    public static final TETile stoneKey = new TETile('k', Color.green, Color.black, "A heavy grey stone key", join(CWD, "/Assets/stoneKey.png").getPath());
+
 
     static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();

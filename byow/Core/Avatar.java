@@ -12,6 +12,7 @@ public class Avatar {
     private Room.Position aP;
     private TETile floor;
     private boolean hasKey;
+    private char foot;
     /**
      * Constructor of an avatar
      * @param name entered by player
@@ -22,8 +23,9 @@ public class Avatar {
         this.name = name;
         this.aP = null;
         this.floor = null;
+        this.foot = '@';
         posInit(tWorld, r, m);
-        hasKey = true;
+        hasKey = false;
     }
     /**
      * get avatar's position
@@ -39,7 +41,7 @@ public class Avatar {
         TETile t = tWorld[p.x][p.y];
         tWorld[aP.x][aP.y] = floor;
         aP = p;
-        tWorld[aP.x][aP.y] = Tileset.AVATAR;
+        tWorld[aP.x][aP.y] = Tileset.AVATAR_DOWN_S;
         floor = t;
     }
     /**
@@ -50,7 +52,8 @@ public class Avatar {
         Room aRoom = (Room) m.get(roomIndex);
         aP = posHelper(aRoom, r);
         floor = tWorld[aP.x][aP.y];
-        tWorld[aP.x][aP.y] = Tileset.AVATAR;
+        tWorld[aP.x][aP.y] = Tileset.AVATAR_DOWN_S;
+        foot = tWorld[aP.x][aP.y].character();
 
     }
     /**
@@ -68,8 +71,9 @@ public class Avatar {
     /**
      * helper ensure the wall can block avatar's movement
      * */
-    public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld) throws IOException {
+    public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld, char dir) throws IOException {
         Room.Position moveP = aP.newP(x, y);
+        foot = tWorld[aP.x][aP.y].character();
         myWorld[aP.x][aP.y] = floor;
         if (myWorld[moveP.x][moveP.y].description().equals("A cold stone wall")) {
             return;
@@ -86,8 +90,42 @@ public class Avatar {
         tWorld[aP.x][aP.y] = floor;
         aP = moveP;
         floor = tWorld[moveP.x][moveP.y];
-        tWorld[moveP.x][moveP.y] = Tileset.AVATAR;
+        avatarStep(tWorld, dir, moveP);
         }
     }
+
+    private void avatarStep(TETile[][] tWorld, char dir, Room.Position moveP) {
+        switch (dir) {
+            case 'W':
+                if (foot == 'r') {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_UP_L;
+                } else {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_UP_R;
+                }
+                break;
+            case 'S':
+                if (foot == 'r') {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_DOWN_L;
+                } else {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_DOWN_R;
+                }
+                break;
+            case 'A':
+                if (foot == 'r') {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_LEFT_L;
+                } else {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_LEFT_R;
+                }
+                break;
+            case 'D':
+                if (foot == 'r') {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_RIGHT_L;
+                } else {
+                    tWorld[moveP.x][moveP.y] = Tileset.AVATAR_RIGHT_R;
+                }
+        }
+
+    }
+
 
 }
