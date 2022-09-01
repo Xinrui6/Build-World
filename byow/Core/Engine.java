@@ -258,9 +258,10 @@ public class Engine {
      * */
     public void interactWithKeyboard() throws IOException {
         TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
+        ter.renderFrame(myWorld);
+        StdDraw.pause(1000);
         switchOff(world.newA.getaP());
         ter.renderFrame(tWorld);
-
         while (true) {
             mouseInteraction();
             char c = charInput();
