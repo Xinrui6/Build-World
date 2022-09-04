@@ -14,6 +14,10 @@ public class World {
     protected PriorityQueue<Room> roomQueue;
     protected Avatar newA;
     protected long seed;
+    protected TETile wall;
+    protected TETile floor;
+    protected TETile key;
+    private int pre = 5;
     /**
      * Constructor of a world
      * @param width the width of the world
@@ -27,6 +31,7 @@ public class World {
         this.roomMap = new HashMap<>();
         this.roomQueue = new PriorityQueue<>();
         this.seed = seed;
+        themes(randomTheme());
     }
 
     /**
@@ -45,6 +50,51 @@ public class World {
             for (int y = 0; y < height; y += 1) {
                 tWorld[x][y] = Tileset.NOTHING;
             }
+        }
+    }
+
+    /**
+     * random choose a tile for room
+     * */
+    private String randomTheme() {
+        int tileNum = random.nextInt(4);
+        sameAsPre(tileNum);
+        pre = tileNum;
+        return switch (tileNum) {
+            case 0 -> "ice";
+            case 1 -> "lava";
+            case 2 -> "candy";
+            case 3 -> "stone";
+            default -> null;
+        };
+    }
+    private void sameAsPre(int n) {
+        if(n == pre) {
+            randomTheme();
+        }
+    }
+
+    private void themes(String theme) {
+        switch(theme) {
+            case "stone":
+                wall = Tileset.STONE_WALL;
+                floor = Tileset.STONE_FLOOR;
+                key = Tileset.stoneKey;
+                break;
+            case "candy":
+                wall = Tileset.CANDY_WALL;
+                floor = Tileset.CANDY_FLOOR;
+                key = Tileset.candyKey;
+                break;
+            case "ice":
+                wall = Tileset.ICE_WALL;
+                floor = Tileset.ICE_FLOOR;
+                key = Tileset.iceKey;
+                break;
+            case "lava":
+                wall = Tileset.LAVA_WALL;
+                floor = Tileset.LAVA_FLOOR;
+                key = Tileset.goldenKey;
         }
     }
     /**
@@ -72,7 +122,7 @@ public class World {
         for (int n = 1; n <= howMany; n++) {
             Room newRoom = new Room(this.random);
             newRoom.recuHerlper(tWorld, newRoom);
-            newRoom.createRoom(tWorld);
+            newRoom.createRoom(tWorld, wall, floor);
             roomMap.put(n, newRoom);
             roomQueue.add(newRoom);
         }
@@ -84,8 +134,8 @@ public class World {
         Room first = roomQueue.poll();
         Room second = roomQueue.poll();
         Hallway hallway = new Hallway(first, second, this.random);
-        hallway.createHall(tWorld, hallway.getRoom1P());
-        hallway.createHall(tWorld, hallway.getRoom2P());
+        hallway.createHall(tWorld, hallway.getRoom1P(), wall, floor);
+        hallway.createHall(tWorld, hallway.getRoom2P(), wall, floor);
 
         if (randomNum(0, 10000) % 2 == 0) {
             roomQueue.add(first);
@@ -119,19 +169,18 @@ public class World {
         }
     }
 
-
     /**
      * helper to check if the position is an inaccessible corner
      * */
     private boolean notCorner(TETile[][] tWorld, int x, int y) {
-        if (tWorld[x][y].equals(Tileset.STONE_WALL)) {
+        if (tWorld[x][y].character() == 'w') {
             for (int i = x - 1; i <= x + 1; i++) {
-                if (!(tWorld[i][y].equals(Tileset.STONE_WALL) || tWorld[i][y].equals(Tileset.NOTHING))) {
+                if (!(tWorld[i][y].character() == 'w' || tWorld[i][y].equals(Tileset.NOTHING))) {
                     return true;
                 }
             }
             for (int j = y - 1; j <= y + 1; j++) {
-                if (!(tWorld[x][j].equals(Tileset.STONE_WALL) || tWorld[x][j].equals(Tileset.NOTHING))) {
+                if (!(tWorld[x][j].character() == 'w' || tWorld[x][j].equals(Tileset.NOTHING))) {
                     return true;
                 }
             }

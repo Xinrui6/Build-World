@@ -258,7 +258,7 @@ public class Engine {
      * */
     public void interactWithKeyboard() throws IOException {
         TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
-        switchOff(world.newA.getaP());
+        //switchOff(world.newA.getaP());
         ter.renderFrame(tWorld);
 
         while (true) {
@@ -277,7 +277,7 @@ public class Engine {
                 saveGame();
                 System.exit(0);
             }
-            switchOff(world.newA.getaP());
+            //switchOff(world.newA.getaP());
             switchOn(world.newA.getaP(), myWorld);
             ter.renderFrame(tWorld);
         }
@@ -352,15 +352,14 @@ public class Engine {
         }
     }
 
-
     private void newInit(String name) throws IOException {
         avatarName = name;
         this.world = new World(WIDTH, HEIGHT, RandomUtils.uniform(new Random(), 0, 99999999));
         this.tWorld = world.createRandomWorld(ter, name);
         Loading.writeObject(MAP, this.tWorld);
         interactWithKeyboard();
-
     }
+
     /**
      * set up mouse interaction
      * */

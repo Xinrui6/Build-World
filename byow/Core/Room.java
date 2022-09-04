@@ -99,7 +99,7 @@ public class Room implements Comparable {
     /**
      * create a room in the 2D world
      * */
-    public void createRoom(TETile[][] tWorld) {
+    public void createRoom(TETile[][] tWorld, TETile wall, TETile floor) {
         if (noRoomCreate(p)) {
             return;
         }
@@ -107,8 +107,8 @@ public class Room implements Comparable {
         if ((max.x <= 2) || (max.y <= 2)) {
             return;
         }
-        buildWall(p, max.x, max.y, tWorld);
-        roomFloor(p, max.x, max.y, tWorld, Tileset.STONE_FLOOR);
+        buildWall(p, max.x, max.y, tWorld, wall);
+        roomFloor(p, max.x, max.y, tWorld, floor);
     }
 
     /**
@@ -164,11 +164,11 @@ public class Room implements Comparable {
     /**
      * build room's walls
      * */
-    protected static void buildWall(Position p, int xSize, int ySize, TETile[][] tWorld) {
-        drawHeng(tWorld, p, xSize, Tileset.STONE_WALL);
-        drawHeng(tWorld, p.newP(0, ySize), xSize, Tileset.STONE_WALL);
-        drawShu(tWorld, p, ySize, Tileset.STONE_WALL);
-        drawShu(tWorld, p.newP(xSize, 0), ySize, Tileset.STONE_WALL);
+    protected static void buildWall(Position p, int xSize, int ySize, TETile[][] tWorld, TETile wall) {
+        drawHeng(tWorld, p, xSize, wall);
+        drawHeng(tWorld, p.newP(0, ySize), xSize, wall);
+        drawShu(tWorld, p, ySize, wall);
+        drawShu(tWorld, p.newP(xSize, 0), ySize, wall);
     }
 
     /**
@@ -183,29 +183,25 @@ public class Room implements Comparable {
     /**
      * draw the room floor
      */
-    protected static void roomFloor(Position p, int xSize, int ySize, TETile[][] tWorld, TETile t) {
+    protected static void roomFloor(Position p, int xSize, int ySize, TETile[][] tWorld, TETile floor) {
         for (int y = 0; y < ySize - 1; y++) {
             for (int x = 0; x < xSize - 1; x++) {
-                stopFloor(tWorld, p.x + 1 + x, p.y + 1 + y, t);
+                stopFloor(tWorld, p.x + 1 + x, p.y + 1 + y, floor);
+
             }
         }
     }
 
     /**
      * ensure hallways floors does not override the rooms' floor
-     * */
-    private static void stopFloor(TETile[][]tWorld, int x, int y, TETile t) {
-        if (t.equals(Tileset.STONE_FLOOR)) {
-            if (tWorld[x][y].equals(Tileset.STONE_WALL) || tWorld[x][y].equals(Tileset.NOTHING)) {
-                tWorld[x][y] = t;
-            }
-        } else {
-            if (tWorld[x][y].equals(Tileset.STONE_WALL) || tWorld[x][y].equals(Tileset.NOTHING)
-                    || tWorld[x][y].equals(Tileset.STONE_FLOOR)) {
-                tWorld[x][y] = t;
-            }
+     */
+    private static void stopFloor(TETile[][]tWorld, int x, int y, TETile floor) {
+        if (tWorld[x][y].character() == 'w' || tWorld[x][y].equals(Tileset.NOTHING)) {
+            tWorld[x][y] = floor;
+
         }
     }
+
 
     /**
      * draw tile horizontally
@@ -227,17 +223,6 @@ public class Room implements Comparable {
         }
     }
 
-    /**
-     * random choose a tile for room
-     * */
-    private TETile randomTile() {
-        int tileNum = random.nextInt(3);
-        return switch (tileNum) {
-            case 0 -> Tileset.WATER;
-            case 1 -> Tileset.GRASS;
-            case 2 -> Tileset.SAND;
-            default -> Tileset.NOTHING;
-        };
-    }
+
 }
 

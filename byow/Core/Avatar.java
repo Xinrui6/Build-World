@@ -75,7 +75,7 @@ public class Avatar {
         Room.Position moveP = aP.newP(x, y);
         foot = tWorld[aP.x][aP.y].character();
         myWorld[aP.x][aP.y] = floor;
-        if (myWorld[moveP.x][moveP.y].description().equals("A cold stone wall")) {
+        if (myWorld[moveP.x][moveP.y].character() =='w') {
             return;
         }
         if (myWorld[moveP.x][moveP.y].description().equals("locked door")) {

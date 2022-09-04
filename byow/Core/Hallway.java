@@ -78,7 +78,7 @@ public class Hallway {
     /**
      * create a hallway, ensure the hallway construct normally
      * */
-    protected void createHall(TETile[][] tWorld, Position p) {
+    protected void createHall(TETile[][] tWorld, Position p, TETile wall, TETile floor) {
         int K1or2 = RandomUtils.uniform(random, 2, 4);
         Position start = p.newP(-1, -1);
         int hallHeng = K1or2;
@@ -94,14 +94,14 @@ public class Hallway {
             hallHeng = Math.abs(p.x - med.x) + 2;
             hallShu = K1or2;
         }
-        buildHall(start, hallHeng, hallShu, tWorld);
+        buildHall(start, hallHeng, hallShu, tWorld, wall, floor);
     }
 
     /**
      * draw the hallway in the 2D world
      *  */
-    private void buildHall(Position p, int xSize, int ySize, TETile[][] tWorld) {
-        Room.buildWall(p, xSize, ySize, tWorld);
-        Room.roomFloor(p, xSize, ySize, tWorld, Tileset.STONE_FLOOR);
+    private void buildHall(Position p, int xSize, int ySize, TETile[][] tWorld,TETile wall,  TETile floor) {
+        Room.buildWall(p, xSize, ySize, tWorld, wall);
+        Room.roomFloor(p, xSize, ySize, tWorld, floor);
     }
 }

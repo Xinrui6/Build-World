@@ -36,10 +36,25 @@ public class Tileset {
 
 
     // texture
-    public static final TETile STONE_WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
+    public static final TETile STONE_WALL = new TETile('w', new Color(216, 128, 128), Color.darkGray,
             "A cold stone wall", join(CWD, "/Assets/stoneWall3.png").getPath());
-    public static final TETile STONE_FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
+    public static final TETile STONE_FLOOR = new TETile('f', new Color(128, 192, 128), Color.black,
             "floor", join(CWD, "/Assets/stoneFloor4.png").getPath());
+    public static final TETile ICE_WALL = new TETile('w', new Color(216, 128, 128), Color.darkGray,
+            "A wall likes glass", join(CWD, "/Assets/iceWall.png").getPath());
+    public static final TETile ICE_FLOOR = new TETile('f', new Color(128, 192, 128), Color.black,
+            "floor", join(CWD, "/Assets/iceFloor.png").getPath());
+    public static final TETile CANDY_WALL = new TETile('w', new Color(216, 128, 128), Color.darkGray,
+            "A wall smells like chocolate", join(CWD, "/Assets/candyWall2.png").getPath());
+    public static final TETile CANDY_FLOOR = new TETile('f', new Color(128, 192, 128), Color.black,
+            "floor", join(CWD, "/Assets/candyFloor4.png").getPath());
+    public static final TETile LAVA_WALL = new TETile('w', new Color(216, 128, 128), Color.darkGray,
+            "Lava wall, don't touch it!", join(CWD, "/Assets/lavaWall.png").getPath());
+    public static final TETile LAVA_FLOOR = new TETile('f', new Color(128, 192, 128), Color.black,
+            "floor", join(CWD, "/Assets/lavaFloor2.png").getPath());
+
+
+
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
     public static final TETile GRASS = new TETile('"', Color.green, Color.black, "Soft green grass", join(CWD, "/Assets/Grass2.png").getPath());
     public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "Clear water waves", join(CWD, "/Assets/Water2.png").getPath());
@@ -55,7 +70,8 @@ public class Tileset {
     // keys
     public static final TETile goldenKey = new TETile('k', Color.green, Color.black, "A shinning golden key", join(CWD, "/Assets/goldenKey.png").getPath());
     public static final TETile stoneKey = new TETile('k', Color.green, Color.black, "A heavy grey stone key", join(CWD, "/Assets/stoneKey.png").getPath());
-
+    public static final TETile candyKey = new TETile('k', Color.green, Color.black, "A sweet key made by candy", join(CWD, "/Assets/candyKey.png").getPath());
+    public static final TETile iceKey = new TETile('k', Color.green, Color.black, "A cold ice key, it is melting!", join(CWD, "/Assets/iceKey.png").getPath());
 
     static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();
