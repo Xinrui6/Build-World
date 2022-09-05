@@ -33,7 +33,9 @@ public class Avatar {
     public Room.Position getaP() {
         return aP;
     }
-
+    public boolean isHasKey() {
+        return hasKey;
+    }
     /**
      * set up avatar position
      * */
@@ -74,26 +76,46 @@ public class Avatar {
     public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld, char dir) throws IOException {
         Room.Position moveP = aP.newP(x, y);
         foot = tWorld[aP.x][aP.y].character();
-        myWorld[aP.x][aP.y] = floor;
+        if (myWorld[moveP.x][moveP.y].character() == 'k') {
+            getKey(myWorld, moveP);
+
+        }
         if (myWorld[moveP.x][moveP.y].character() =='w') {
             return;
         }
         if (myWorld[moveP.x][moveP.y].description().equals("locked door")) {
-            Engine e = new Engine(name);
-            hasKey = false;
+            nextF();
         }
-        if (myWorld[moveP.x][moveP.y].character() == 'k') {
-            hasKey = true;
-            tWorld[moveP.x][moveP.y] = floor;
-            Engine.keyFrame(hasKey);
+        if (myWorld[moveP.x][moveP.y].description().equals("locked door") &&
+                (!hasKey)) {
+            Engine.lockframe();
         } else {
-        tWorld[aP.x][aP.y] = floor;
-        aP = moveP;
-        floor = tWorld[moveP.x][moveP.y];
-        avatarStep(tWorld, dir, moveP);
+            myWorld[aP.x][aP.y] = floor;
+            aP = moveP;
+            floor = myWorld[moveP.x][moveP.y];
+            avatarStep(myWorld, dir, moveP);
         }
     }
+    /**
+     * put the key on the hand from the floor
+     * */
+    private void getKey(TETile[][] tWorld, Room.Position moveP) {
+        hasKey = true;
+        tWorld[moveP.x][moveP.y] = floor;
 
+    }
+    /**
+     * if player has the key, enter the next floor
+     * */
+    private void nextF() throws IOException {
+        if (hasKey) {
+        Engine e = new Engine(name);
+        hasKey = false;
+        }
+    }
+    /**
+     * animation for switch foor of avatar foot
+     * */
     private void avatarStep(TETile[][] tWorld, char dir, Room.Position moveP) {
         switch (dir) {
             case 'W':

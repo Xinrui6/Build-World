@@ -8,13 +8,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
+import static byow.Core.Loading.join;
+
 public class Engine {
     public static final File CWD = new File(System.getProperty("user.dir"));
-    private static final File GAMEDir = Loading.join(CWD, "GameDir");
-    private static final File NAME = Loading.join(GAMEDir, "name");
-    private static final File POSITION = Loading.join(GAMEDir, "Position");
-    private static final File SEED = Loading.join(GAMEDir, "seed");
-    private static final File MAP = Loading.join(GAMEDir, "map");
+    private static final File GAMEDir = join(CWD, "GameDir");
+    private static final File NAME = join(GAMEDir, "name");
+    private static final File POSITION = join(GAMEDir, "Position");
+    private static final File SEED = join(GAMEDir, "seed");
+    private static final File MAP = join(GAMEDir, "map");
     private static final Font titleF = new Font("Monaco", Font.BOLD, 50);
     private static final Font textF = new Font("Monaco", Font.BOLD, 30);
     public static final int WIDTH = 90;
@@ -217,12 +219,20 @@ public class Engine {
         StdDraw.text(WIDTH * xPos, HEIGHT * yPos, s);
         StdDraw.show();
     }
-    public static void keyFrame(Boolean hasKey) {
-        if (hasKey) {
-
-            drawFrame("key", 0.5,0.9);
+    public void keyFrame() {
+        while (true) {
+        if (world.getNewA().isHasKey()) {
+            StdDraw.picture(80, 37, world.getPath(),2,2);
             StdDraw.show();
+            }
+            break;
         }
+    }
+    public static void lockframe() {
+
+        String s = "You need a key to pass.";
+        drawFrame(s, 0.5, 0.9);
+        StdDraw.pause(1000);
     }
     /**
      * convert x or y position into two numbers by add 0 before it
@@ -260,36 +270,47 @@ public class Engine {
         TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
         ter.renderFrame(myWorld);
         StdDraw.pause(1000);
-        switchOff(world.newA.getaP());
+        //switchOff(world.getApos(), tWorld);
         ter.renderFrame(tWorld);
-
-        while (true) {
-            mouseInteraction();
+        while(true) {
             char c = charInput();
+            mouseInteraction();
+            keyFrame();
+        while (true) {
+
             if (c == 'W') {
                 world.newA.moveHelper(0, 1, tWorld, myWorld, 'W');
+                break;
             } else if (c == 'S') {
                 world.newA.moveHelper(0, -1, tWorld, myWorld, 'S');
+                break;
             } else if (c == 'D') {
                 world.newA.moveHelper(1, 0, tWorld, myWorld, 'D');
+                break;
             } else if (c == 'A') {
                 world.newA.moveHelper(-1, 0, tWorld, myWorld, 'A');
+                break;
             } else if (c == '0') {
                 setPersistence();
                 saveGame();
                 System.exit(0);
             }
-            switchOff(world.newA.getaP());
-            switchOn(world.newA.getaP(), myWorld);
+            //switchOff(world.getApos(), tWorld);
+            switchOn(world.getApos(), myWorld);
+
             ter.renderFrame(tWorld);
+            }
         }
     }
-    private void switchOff(Room.Position pos) {
+
+    private int[] checkdis(Room.Position pos){
+        int[] Coor = new int[4];
         int xPos = pos.x;
         int yPos = pos.y;
         int xL = xPos - 2;
         if (xL <= 0) {
             xL = 1;
+
         }
         int xR = xPos + 2;
         if (xR >= WIDTH) {
@@ -303,7 +324,42 @@ public class Engine {
         if (yD <= 0) {
             yD = 1;
         }
-        for (int i = 0; i < WIDTH; i ++) {
+        Coor[0] = xL;
+        Coor[1] = xR;
+        Coor[2] = yU;
+        Coor[3] = yD;
+        return Coor;
+    }
+    private void switchOn(Room.Position pos, TETile[][] myWorld) {
+        int[] posC = checkdis(pos);
+        int xL = posC[0];
+        int xR = posC[1];
+        int yU = posC[2];
+        int yD = posC[3];
+        for (int i = xL; i <= xR; i++) {
+            for (int j = yD; j <= yU; j++) {
+                tWorld[i][j] = myWorld[i][j];
+            }
+        }
+    }
+
+    private void switchOff(Room.Position pos, TETile[][] myWorld) {
+        int[] posC = checkdis(pos);
+        int xL = posC[0];
+        int xR = posC[1];
+        int yU = posC[2];
+        int yD = posC[3];
+        for (int i = 0; i < WIDTH; i++) {
+            for(int j = 0; j < HEIGHT; j++) {
+                tWorld[i][j] = Tileset.NOTHING;
+            }
+        }
+        for (int i = xL; i< xR; i++) {
+            for (int j = yD; j < yU; j++) {
+                tWorld[i][j] = myWorld[i][j];
+            }
+        }
+        /**for (int i = 0; i < WIDTH; i ++) {
             for (int j = yU; j < HEIGHT; j ++) {
                 tWorld[i][j] = Tileset.NOTHING;
             }
@@ -322,38 +378,14 @@ public class Engine {
             for (int j = yD; j < yU; j++) {
                 tWorld[i][j] = Tileset.NOTHING;
             }
-        }
+        }*/
     }
 
-    private void switchOn(Room.Position pos, TETile[][] myWorld) {
-        int xPos = pos.x;
-        int yPos = pos.y;
-        int xL = xPos - 2;
-        if (xL <= 0) {
-            xL = 1;
-        }
-        int xR = xPos + 2;
-        if (xR >= WIDTH) {
-            xR = WIDTH - 1;
-        }
-        int yU = yPos + 2;
-        if (yU >= HEIGHT) {
-            yU = HEIGHT - 1;
-        }
-        int yD = yPos - 2;
-        if (yD <= 0) {
-            yD = 1;
-        }
 
-        for (int i = xL; i <= xR; i++) {
-            for (int j = yD; j <= yU; j++) {
-                if (!(i == xPos && j == yPos)) {
-                tWorld[i][j] = myWorld[i][j];
-                }
-            }
-        }
-    }
 
+    /**
+     * reinit the enigne if the player enter the next floor
+     * */
     private void newInit(String name) throws IOException {
         avatarName = name;
         this.world = new World(WIDTH, HEIGHT, RandomUtils.uniform(new Random(), 0, 99999999));
@@ -368,8 +400,8 @@ public class Engine {
     private void mouseInteraction() {
         while (true) {
             TETile t = tWorld[(int) StdDraw.mouseX()][(int) StdDraw.mouseY()];
-            drawFrame(t.description(), 0.05, 0.9);
-            drawFrame("", 0.05, 0.9);
+            drawFrame(t.description(), 0.1, 0.9);
+            drawFrame("", 0.1, 0.9);
             break;
         }
     }

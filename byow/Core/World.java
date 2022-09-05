@@ -6,6 +6,11 @@ import byow.TileEngine.Tileset;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Random;
+
+import static byow.Core.Engine.CWD;
+import static byow.Core.Loading.join;
+
+
 public class World {
     protected Random random;
     protected int width;
@@ -17,7 +22,9 @@ public class World {
     protected TETile wall;
     protected TETile floor;
     protected TETile key;
-    private int pre = 5;
+    private int pre;
+    private String theme;
+    private String path;
     /**
      * Constructor of a world
      * @param width the width of the world
@@ -31,7 +38,18 @@ public class World {
         this.roomMap = new HashMap<>();
         this.roomQueue = new PriorityQueue<>();
         this.seed = seed;
-        themes(randomTheme());
+        this.theme =randomTheme();
+        this.pre = 7;
+        themes(theme);
+    }
+    public Room.Position getApos() {
+        return newA.getaP();
+    }
+    public Avatar getNewA() {
+        return newA;
+    }
+    public String getPath() {
+        return path;
     }
 
     /**
@@ -80,21 +98,25 @@ public class World {
                 wall = Tileset.STONE_WALL;
                 floor = Tileset.STONE_FLOOR;
                 key = Tileset.stoneKey;
+                path = join(CWD, "/Assets/I_Key06.png").getPath();
                 break;
             case "candy":
                 wall = Tileset.CANDY_WALL;
                 floor = Tileset.CANDY_FLOOR;
                 key = Tileset.candyKey;
+                path = join(CWD, "/Assets/I_Key07.png").getPath();
                 break;
             case "ice":
                 wall = Tileset.ICE_WALL;
                 floor = Tileset.ICE_FLOOR;
                 key = Tileset.iceKey;
+                path = join(CWD, "/Assets/I_Key02.png").getPath();
                 break;
             case "lava":
                 wall = Tileset.LAVA_WALL;
                 floor = Tileset.LAVA_FLOOR;
                 key = Tileset.goldenKey;
+                path = join(CWD, "/Assets/I_Key03.png").getPath();
         }
     }
     /**
@@ -111,6 +133,7 @@ public class World {
             creteHallWay(tWorld);
         }
         setDoor(tWorld);
+        setKey(tWorld, "s");
         newA = new Avatar(name, tWorld, random, roomMap);
         return tWorld;
     }
@@ -167,6 +190,17 @@ public class World {
         } else {
             setDoor(tWorld);
         }
+
+    }
+    /**
+     * set the key on the map
+     * */
+    private void setKey(TETile[][] tWorld, String s) {
+        int k = randomNum(1, roomMap.size());
+        Room r = roomMap.get(k);
+        int x = randomNum(r.getP().x+1, r.getP().x+r.getKuan()-1);
+        int y = randomNum(r.getP().y+1, r.getP().y+r.getChang()-1);
+        tWorld[x][y] = key;
     }
 
     /**
@@ -187,5 +221,6 @@ public class World {
         }
         return false;
     }
+
 }
 
