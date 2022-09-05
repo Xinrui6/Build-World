@@ -72,6 +72,9 @@ public class Tileset {
     public static final TETile stoneKey = new TETile('k', Color.green, Color.black, "A heavy grey stone key", join(CWD, "/Assets/stoneKey.png").getPath());
     public static final TETile candyKey = new TETile('k', Color.green, Color.black, "A sweet key made by candy", join(CWD, "/Assets/candyKey.png").getPath());
     public static final TETile iceKey = new TETile('k', Color.green, Color.black, "A cold ice key, it is melting!", join(CWD, "/Assets/iceKey.png").getPath());
+    // portal
+    public static final TETile portal = new TETile('p', Color.green, Color.black, "This is a portal, but the result is random", join(CWD, "/Assets/portal.png").getPath());
+
 
     static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();
