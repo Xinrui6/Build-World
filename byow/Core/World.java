@@ -3,6 +3,9 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+
+import java.io.IOException;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Random;
@@ -25,6 +28,8 @@ public class World {
     private int pre;
     private String theme;
     private String path;
+    private Room.Position Portal1;
+    private Room.Position Portal2;
     /**
      * Constructor of a world
      * @param width the width of the world
@@ -133,7 +138,8 @@ public class World {
             creteHallWay(tWorld);
         }
         setDoor(tWorld);
-        setKey(tWorld, "s");
+        setKey(tWorld);
+        setPortal(tWorld);
         newA = new Avatar(name, tWorld, random, roomMap);
         return tWorld;
     }
@@ -195,12 +201,64 @@ public class World {
     /**
      * set the key on the map
      * */
-    private void setKey(TETile[][] tWorld, String s) {
+    private void setKey(TETile[][] tWorld) {
+        Room r = randRoom();
+        Room.Position pos = roomPos(r);
+        int x = pos.x;
+        int y = pos.y;
+        tWorld[x][y] = key;
+    }
+
+    private void setPortal(TETile[][] tWorld) {
+        Room r1 = randRoom();
+        Room r2 = randRoom();
+        while (r2.equals(r1)) {
+            r2 = randRoom();
+        }
+        Portal1 = roomPos(r1);
+        Portal2 = roomPos(r2);
+        tWorld[Portal1.x][Portal1.y] = Tileset.portal;
+        tWorld[Portal2.x][Portal2.y] = Tileset.portal;
+    }
+    private Room randRoom() {
         int k = randomNum(1, roomMap.size());
         Room r = roomMap.get(k);
+        return r;
+    }
+    private Room.Position roomPos(Room r) {
         int x = randomNum(r.getP().x+1, r.getP().x+r.getKuan()-1);
         int y = randomNum(r.getP().y+1, r.getP().y+r.getChang()-1);
-        tWorld[x][y] = key;
+        return new Room.Position(x, y);
+    }
+    public void movements(int x, int y, TETile[][] tWorld, TETile[][] myWorld, char dir) throws IOException {
+        Room.Position moveP = newA.changeaP(x, y);
+        if (myWorld[moveP.x][moveP.y].character() == 'k') {
+            newA.getKey(myWorld, moveP);
+        }
+        if (myWorld[moveP.x][moveP.y].character() =='w') {
+            return;
+        }
+        if (myWorld[moveP.x][moveP.y].description().equals("locked door")) {
+            newA.nextF();
+        }
+        if (myWorld[moveP.x][moveP.y].description().equals("locked door") &&
+                (!newA.isHasKey())) {
+            Engine.lockframe();
+        }
+        if (myWorld[moveP.x][moveP.y].character() == 'p') {
+            portalHelper(myWorld);
+            return;
+        }
+        newA.moveHelper(moveP, tWorld, myWorld, dir);
+    }
+    private void portalHelper(TETile[][] myWorld) {
+        Room target = randRoom();
+        while (target.equals(Portal1)
+                || target.equals(Portal2)) {
+            target = randRoom();
+        }
+        Room.Position pos = roomPos(target);
+        newA.pHelper(myWorld, pos);
     }
 
     /**

@@ -1,7 +1,7 @@
 package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.introcs.StdDraw;
+
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,6 +32,9 @@ public class Avatar {
      * */
     public Room.Position getaP() {
         return aP;
+    }
+    public Room.Position changeaP(int x, int y) {
+        return aP.newP(x, y);
     }
     public boolean isHasKey() {
         return hasKey;
@@ -73,43 +76,37 @@ public class Avatar {
     /**
      * helper ensure the wall can block avatar's movement
      * */
-    public void moveHelper(int x, int y, TETile[][] tWorld, TETile[][] myWorld, char dir) throws IOException {
-        Room.Position moveP = aP.newP(x, y);
+    public void moveHelper(Room.Position moveP, TETile[][] tWorld, TETile[][] myWorld, char dir) {
         foot = tWorld[aP.x][aP.y].character();
-        if (myWorld[moveP.x][moveP.y].character() == 'k') {
-            getKey(myWorld, moveP);
-
-        }
-        if (myWorld[moveP.x][moveP.y].character() =='w') {
-            return;
-        }
-        if (myWorld[moveP.x][moveP.y].description().equals("locked door")) {
-            nextF();
-        }
-        if (myWorld[moveP.x][moveP.y].description().equals("locked door") &&
-                (!hasKey)) {
-            Engine.lockframe();
-        } else {
-            myWorld[aP.x][aP.y] = floor;
-            aP = moveP;
-            floor = myWorld[moveP.x][moveP.y];
-            avatarStep(myWorld, dir, moveP);
-        }
+        myWorld[aP.x][aP.y] = floor;
+        aP = moveP;
+        floor = myWorld[moveP.x][moveP.y];
+        avatarStep(myWorld, dir, moveP);
     }
+
+    protected void pHelper(TETile[][] myWorld, Room.Position pos) {
+        myWorld[aP.x][aP.y] = floor;
+        floor = myWorld[pos.x][pos.y];
+        aP = pos;
+        myWorld[pos.x][pos.y] = Tileset.AVATAR_DOWN_S;
+
+    }
+
     /**
      * put the key on the hand from the floor
      * */
-    private void getKey(TETile[][] tWorld, Room.Position moveP) {
+    protected void getKey(TETile[][] tWorld, Room.Position moveP) {
         hasKey = true;
         tWorld[moveP.x][moveP.y] = floor;
-
     }
     /**
      * if player has the key, enter the next floor
      * */
-    private void nextF() throws IOException {
+    protected void nextF() throws IOException {
         if (hasKey) {
         Engine e = new Engine(name);
+        e.newInit(name);
+        e.interactWithKeyboard();
         hasKey = false;
         }
     }

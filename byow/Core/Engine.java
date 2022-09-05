@@ -270,36 +270,30 @@ public class Engine {
         TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
         ter.renderFrame(myWorld);
         StdDraw.pause(1000);
-        //switchOff(world.getApos(), tWorld);
+        switchOff(world.getApos(), tWorld);
+        switchOn(world.getApos(), myWorld);
         ter.renderFrame(tWorld);
-        while(true) {
-            char c = charInput();
+
+        while (true) {
             mouseInteraction();
             keyFrame();
-        while (true) {
-
+            char c = charInput();
             if (c == 'W') {
-                world.newA.moveHelper(0, 1, tWorld, myWorld, 'W');
-                break;
+                world.movements(0, 1, tWorld, myWorld, 'W');
             } else if (c == 'S') {
-                world.newA.moveHelper(0, -1, tWorld, myWorld, 'S');
-                break;
+                world.movements(0, -1, tWorld, myWorld, 'S');
             } else if (c == 'D') {
-                world.newA.moveHelper(1, 0, tWorld, myWorld, 'D');
-                break;
+                world.movements(1, 0, tWorld, myWorld, 'D');
             } else if (c == 'A') {
-                world.newA.moveHelper(-1, 0, tWorld, myWorld, 'A');
-                break;
+                world.movements(-1, 0, tWorld, myWorld, 'A');
             } else if (c == '0') {
                 setPersistence();
                 saveGame();
                 System.exit(0);
             }
-            //switchOff(world.getApos(), tWorld);
+            switchOff(world.getApos(), tWorld);
             switchOn(world.getApos(), myWorld);
-
             ter.renderFrame(tWorld);
-            }
         }
     }
 
@@ -386,13 +380,11 @@ public class Engine {
     /**
      * reinit the enigne if the player enter the next floor
      * */
-    private void newInit(String name) throws IOException {
+    protected void newInit(String name){
         avatarName = name;
         this.world = new World(WIDTH, HEIGHT, RandomUtils.uniform(new Random(), 0, 99999999));
         this.tWorld = world.createRandomWorld(ter, name);
         Loading.writeObject(MAP, this.tWorld);
-        interactWithKeyboard();
-
     }
     /**
      * set up mouse interaction
