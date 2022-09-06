@@ -13,8 +13,12 @@ https://introcs.cs.princeton.edu/java/stdlib/StdDraw.java.html
 2. User can determine the name.  
 3. Using keyboard to control avator to move around;    
 4. A “Heads Up Display” (HUD): Text that describes the tile currently under the mouse pointer.    
-5. Lights off!! You can only see what aroung you.  
-6. To Be Continued...    
+5. Lights off!! You can only see what aroung you. 
+6. You can go upstairs if you can find the door.        
+7. You need a key to open the door.     
+8. The theme of every level are different.      
+9. There are two portals, you can use them, but the result is random.       
+10. To Be Continued...    
 
 ##  Basic Control System :video_game:   
 **MENU**
