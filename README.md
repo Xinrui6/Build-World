@@ -4,7 +4,7 @@ This is a simple interactive RPG-like game with implementation of a 2D tile-base
 The developers: Me & Zhishuo Fang [(gimesmmilkt)](https://github.com/gimesmmilkt)
     
 This is the project 3 of [Berkeley CS61B](https://sp21.datastructur.es/materials/proj/proj3/proj3). The world is pseudorandomly generated based on seed, including number of rooms and hallways, and position of these. The user will be able to explore by walking around and interacting with objects in that world using keyboard.       
-The functions in `Loading` and `RandomUtils` class are provided by the course. The 2D tile-based world and interactive engine is based on the library `StdDraw.java` by Princeton:   
+The functions in `Loading` and `RandomUtils` class are provided by the course. The 2D tile-based world and interactive engine are based on the library `StdDraw.java` by Princeton:   
 ```
 https://introcs.cs.princeton.edu/java/stdlib/StdDraw.java.html
 ```
