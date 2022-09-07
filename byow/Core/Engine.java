@@ -30,7 +30,7 @@ public class Engine {
     /**
      * Constructor of an Engine, initial a canvas with background color and size
      * */
-    public Engine() throws IOException {
+    public Engine() {
         StdDraw.setCanvasSize(WIDTH * 16, HEIGHT * 16);
         StdDraw.clear(Color.BLACK);
         StdDraw.setXscale(0, WIDTH);
@@ -42,14 +42,13 @@ public class Engine {
     /** Initialize the engine,
      * enable the input with keyboard
      * draw the main menu and title*/
-    private void engineInit() throws IOException {
+    private void engineInit() {
         StdDraw.enableDoubleBuffering();
         startGame();
         manuInteraction();
         titleOfGame();
         ter.renderFrame(tWorld);
         StdDraw.pause(1000);
-
     }
 
     /**
@@ -115,7 +114,7 @@ public class Engine {
      * L for load a game
      * Q for quiting
      * */
-    private void manuInteraction() throws IOException {
+    private void manuInteraction() {
         while (true) {
             if (charInput() == 'N') {
                 StdDraw.clear(Color.BLACK);
@@ -266,6 +265,11 @@ public class Engine {
     private boolean last() {
         return level == 2;
     }
+
+    private void switchLight(TETile[][] tWorld, TETile[][] myWorld) {
+        switchOff(world.getApos(), tWorld);
+        switchOn(world.getApos(), myWorld);
+    }
     /**
      * set up direction interaction
      * */
@@ -273,10 +277,12 @@ public class Engine {
         TETile[][] myWorld = Loading.readObject(MAP, TETile[][].class);
         ter.renderFrame(myWorld);
         StdDraw.pause(1000);
-        switchOff(world.getApos(), tWorld);
-        switchOn(world.getApos(), myWorld);
+        switchLight(tWorld, myWorld);
         ter.renderFrame(tWorld);
+        keyboardHelper(myWorld);
+    }
 
+    private void keyboardHelper(TETile[][] myWorld) throws IOException {
         while (true) {
             mouseInteraction();
             keyFrame();
@@ -294,15 +300,14 @@ public class Engine {
                 saveGame();
                 System.exit(0);
             }
-            if (world.nextLevel(myWorld)) {
+            if (world.nextLevel()) {
                 if (last()) {
                     theEnd();
                 }
                 level++;
                 newInit(world.newA.getName());
             }
-            switchOff(world.getApos(), tWorld);
-            switchOn(world.getApos(), myWorld);
+            switchLight(tWorld, myWorld);
             ter.renderFrame(tWorld);
         }
     }
@@ -353,9 +358,7 @@ public class Engine {
         int yU = posC[2];
         int yD = posC[3];
         for (int i = xL; i <= xR; i++) {
-            for (int j = yD; j <= yU; j++) {
-                tWorld[i][j] = myWorld[i][j];
-            }
+            if (yU + 1 - yD >= 0) System.arraycopy(myWorld[i], yD, tWorld[i], yD, yU + 1 - yD);
         }
     }
 
@@ -371,9 +374,7 @@ public class Engine {
             }
         }
         for (int i = xL; i< xR; i++) {
-            for (int j = yD; j < yU; j++) {
-                tWorld[i][j] = myWorld[i][j];
-            }
+            if (yU - yD >= 0) System.arraycopy(myWorld[i], yD, tWorld[i], yD, yU - yD);
         }
         /**for (int i = 0; i < WIDTH; i ++) {
             for (int j = yU; j < HEIGHT; j ++) {

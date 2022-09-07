@@ -3,11 +3,6 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.introcs.StdDraw;
-
-import java.awt.*;
-import java.io.IOException;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Random;
@@ -101,30 +96,31 @@ public class World {
     }
 
     private void themes(String theme) {
-        switch(theme) {
-            case "stone":
+        switch (theme) {
+            case "stone" -> {
                 wall = Tileset.STONE_WALL;
                 floor = Tileset.STONE_FLOOR;
                 key = Tileset.stoneKey;
                 path = join(CWD, "/Assets/I_Key06.png").getPath();
-                break;
-            case "candy":
+            }
+            case "candy" -> {
                 wall = Tileset.CANDY_WALL;
                 floor = Tileset.CANDY_FLOOR;
                 key = Tileset.candyKey;
                 path = join(CWD, "/Assets/I_Key07.png").getPath();
-                break;
-            case "ice":
+            }
+            case "ice" -> {
                 wall = Tileset.ICE_WALL;
                 floor = Tileset.ICE_FLOOR;
                 key = Tileset.iceKey;
                 path = join(CWD, "/Assets/I_Key02.png").getPath();
-                break;
-            case "lava":
+            }
+            case "lava" -> {
                 wall = Tileset.LAVA_WALL;
                 floor = Tileset.LAVA_FLOOR;
                 key = Tileset.goldenKey;
                 path = join(CWD, "/Assets/I_Key03.png").getPath();
+            }
         }
     }
     /**
@@ -223,10 +219,20 @@ public class World {
         tWorld[Portal1.x][Portal1.y] = Tileset.portal;
         tWorld[Portal2.x][Portal2.y] = Tileset.portal;
     }
+
+    private void portalHelper(TETile[][] myWorld) {
+        Room target = randRoom();
+        while (target.equals(Portal1)
+                | target.equals(Portal2)) {
+            target = randRoom();
+        }
+        Room.Position pos = roomPos(target);
+        newA.pHelper(myWorld, pos);
+    }
+
     private Room randRoom() {
         int k = randomNum(1, roomMap.size());
-        Room r = roomMap.get(k);
-        return r;
+        return roomMap.get(k);
     }
     private Room.Position roomPos(Room r) {
         int x = randomNum(r.getP().x+1, r.getP().x+r.getKuan()-1);
@@ -234,11 +240,11 @@ public class World {
         return new Room.Position(x, y);
     }
 
-    protected boolean nextLevel(TETile[][] myWorld) {
+    protected boolean nextLevel() {
         return (newA.getFloor().description().equals("locked door") && getNewA().isHasKey());
     }
 
-    public void movements(int x, int y, TETile[][] tWorld, TETile[][] myWorld, char dir) throws IOException {
+    public void movements(int x, int y, TETile[][] tWorld, TETile[][] myWorld, char dir) {
         Room.Position moveP = newA.changeaP(x, y);
         if (myWorld[moveP.x][moveP.y].character() == 'k') {
             newA.getKey(myWorld, moveP);
@@ -255,15 +261,6 @@ public class World {
             return;
         }
         newA.moveHelper(moveP, tWorld, myWorld, dir);
-    }
-    private void portalHelper(TETile[][] myWorld) {
-        Room target = randRoom();
-        while (target.equals(Portal1)
-                | target.equals(Portal2)) {
-            target = randRoom();
-        }
-        Room.Position pos = roomPos(target);
-        newA.pHelper(myWorld, pos);
     }
 
     /**
@@ -284,11 +281,5 @@ public class World {
         }
         return false;
     }
-
-    private void theEnd(String name) {
-        StdDraw.clear(Color.BLACK);
-
-    }
-
 }
 
