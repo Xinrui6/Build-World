@@ -3,7 +3,9 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ public class World {
     private String path;
     private Room.Position Portal1;
     private Room.Position Portal2;
+
     /**
      * Constructor of a world
      * @param width the width of the world
@@ -230,6 +233,11 @@ public class World {
         int y = randomNum(r.getP().y+1, r.getP().y+r.getChang()-1);
         return new Room.Position(x, y);
     }
+
+    protected boolean nextLevel(TETile[][] myWorld) {
+        return (newA.getFloor().description().equals("locked door") && getNewA().isHasKey());
+    }
+
     public void movements(int x, int y, TETile[][] tWorld, TETile[][] myWorld, char dir) throws IOException {
         Room.Position moveP = newA.changeaP(x, y);
         if (myWorld[moveP.x][moveP.y].character() == 'k') {
@@ -237,9 +245,6 @@ public class World {
         }
         if (myWorld[moveP.x][moveP.y].character() =='w') {
             return;
-        }
-        if (myWorld[moveP.x][moveP.y].description().equals("locked door")) {
-            newA.nextF();
         }
         if (myWorld[moveP.x][moveP.y].description().equals("locked door") &&
                 (!newA.isHasKey())) {
@@ -254,7 +259,7 @@ public class World {
     private void portalHelper(TETile[][] myWorld) {
         Room target = randRoom();
         while (target.equals(Portal1)
-                || target.equals(Portal2)) {
+                | target.equals(Portal2)) {
             target = randRoom();
         }
         Room.Position pos = roomPos(target);
@@ -278,6 +283,11 @@ public class World {
             }
         }
         return false;
+    }
+
+    private void theEnd(String name) {
+        StdDraw.clear(Color.BLACK);
+
     }
 
 }

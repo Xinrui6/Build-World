@@ -25,6 +25,7 @@ public class Engine {
     private World world;
     private TETile[][] tWorld;
     private String avatarName;
+    private int level;
 
     /**
      * Constructor of an Engine, initial a canvas with background color and size
@@ -35,15 +36,9 @@ public class Engine {
         StdDraw.setXscale(0, WIDTH);
         StdDraw.setYscale(0, HEIGHT);
         engineInit();
+        level = 1;
     }
-    public Engine(String name) throws IOException {
 
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
-        newInit(name);
-
-    }
     /** Initialize the engine,
      * enable the input with keyboard
      * draw the main menu and title*/
@@ -63,14 +58,14 @@ public class Engine {
     private void startGame() {
         String s = "No Name for This Game Yet";
         StdDraw.setFont(titleF);
-        drawFrame(s, 0.5, 0.65);
+        drawFrame(s, 0.5, 0.65, null);
         StdDraw.setFont(textF);
         String ng = "New Game (N)";
-        drawFrame(ng, 0.5, 0.45);
+        drawFrame(ng, 0.5, 0.45, null);
         String lg = "Load Game (L)";
-        drawFrame(lg, 0.5, 0.375);
+        drawFrame(lg, 0.5, 0.375, null);
         String qg = "Quit Game (Q)";
-        drawFrame(qg, 0.5, 0.3);
+        drawFrame(qg, 0.5, 0.3, null);
 
     }
     /**
@@ -91,7 +86,7 @@ public class Engine {
     private void titleOfGame() {
         StdDraw.clear(Color.BLACK);
         StdDraw.setFont(titleF);
-        drawFrame("Adventure of " + avatarName, 0.5, 0.6);
+        drawFrame("Adventure of " + avatarName, 0.5, 0.6, null);
         StdDraw.pause(2000);
         StdDraw.clear(Color.BLACK);
         StdDraw.setFont();
@@ -148,9 +143,9 @@ public class Engine {
     private void nameInit() {
         StdDraw.setFont(textF);
         String message = "Hit enter to confirm";
-        drawFrame(message, 0.5, 0.8);
+        drawFrame(message, 0.5, 0.8, null);
         String name = "Please enter your name: ";
-        drawFrame(name, 0.4, 0.5);
+        drawFrame(name, 0.4, 0.5, null);
     }
     /**
      * recursion helper of name creating
@@ -189,13 +184,13 @@ public class Engine {
     private boolean checkLength(String s) {
         if (s.length() < 3) {
             String m = "Too short, please be serious!";
-            drawFrame(m, 0.5, 0.4);
+            drawFrame(m, 0.5, 0.4, null);
             StdDraw.pause(2000);
             StdDraw.clear(Color.black);
             return false;
         } else if (s.length() > 12) {
             String m = "Your name is too LOOOOOOOONG";
-            drawFrame(m, 0.5, 0.4);
+            drawFrame(m, 0.5, 0.4, null);
             StdDraw.pause(2000);
             StdDraw.clear(Color.black);
             return false;
@@ -214,11 +209,15 @@ public class Engine {
     /**
      * helper for all text drawing except name
      * */
-    private static void drawFrame(String s, double xPos, double yPos) {
-        StdDraw.setPenColor(Color.ORANGE);
+    private static void drawFrame(String s, double xPos, double yPos, Color c) {
+        if (c == null) {
+            c = Color.ORANGE;
+        }
+        StdDraw.setPenColor(c);
         StdDraw.text(WIDTH * xPos, HEIGHT * yPos, s);
         StdDraw.show();
     }
+
     public void keyFrame() {
         while (true) {
         if (world.getNewA().isHasKey()) {
@@ -231,7 +230,7 @@ public class Engine {
     public static void lockframe() {
 
         String s = "You need a key to pass.";
-        drawFrame(s, 0.5, 0.9);
+        drawFrame(s, 0.5, 0.9, null);
         StdDraw.pause(1000);
     }
     /**
@@ -263,6 +262,10 @@ public class Engine {
         Loading.writeObject(POSITION, x + y);
         Loading.writeObject(SEED, world.seed);
     }
+
+    private boolean last() {
+        return level == 2;
+    }
     /**
      * set up direction interaction
      * */
@@ -291,10 +294,28 @@ public class Engine {
                 saveGame();
                 System.exit(0);
             }
+            if (world.nextLevel(myWorld)) {
+                if (last()) {
+                    theEnd();
+                }
+                level++;
+                newInit(world.newA.getName());
+            }
             switchOff(world.getApos(), tWorld);
             switchOn(world.getApos(), myWorld);
             ter.renderFrame(tWorld);
         }
+    }
+
+    private void theEnd() {
+        StdDraw.disableDoubleBuffering();
+        StdDraw.clear(Color.BLACK);
+        String thanks = world.newA.getName() + ", you get out of the maze!!";
+        StdDraw.setFont(titleF);
+        drawFrame(thanks, 0.5, 0.55,Color.yellow);
+        drawFrame("Thank you for playing!!", 0.5, 0.45, Color.yellow);
+        StdDraw.pause(5000);
+        System.exit(0);
     }
 
     private int[] checkdis(Room.Position pos){
@@ -324,6 +345,7 @@ public class Engine {
         Coor[3] = yD;
         return Coor;
     }
+
     private void switchOn(Room.Position pos, TETile[][] myWorld) {
         int[] posC = checkdis(pos);
         int xL = posC[0];
@@ -380,11 +402,13 @@ public class Engine {
     /**
      * reinit the enigne if the player enter the next floor
      * */
-    protected void newInit(String name){
+    protected void newInit(String name) throws IOException {
+        StdDraw.clear(Color.BLACK);
         avatarName = name;
         this.world = new World(WIDTH, HEIGHT, RandomUtils.uniform(new Random(), 0, 99999999));
         this.tWorld = world.createRandomWorld(ter, name);
         Loading.writeObject(MAP, this.tWorld);
+        interactWithKeyboard();
     }
     /**
      * set up mouse interaction
@@ -392,10 +416,11 @@ public class Engine {
     private void mouseInteraction() {
         while (true) {
             TETile t = tWorld[(int) StdDraw.mouseX()][(int) StdDraw.mouseY()];
-            drawFrame(t.description(), 0.1, 0.9);
-            drawFrame("", 0.1, 0.9);
+            drawFrame(t.description(), 0.1, 0.9, null);
+            drawFrame("", 0.1, 0.9, null);
             break;
         }
     }
+
 }
 

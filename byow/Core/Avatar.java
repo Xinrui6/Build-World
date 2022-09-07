@@ -30,8 +30,14 @@ public class Avatar {
     /**
      * get avatar's position
      * */
+    public String getName() {
+        return name;
+    }
     public Room.Position getaP() {
         return aP;
+    }
+    public TETile getFloor() {
+        return floor;
     }
     public Room.Position changeaP(int x, int y) {
         return aP.newP(x, y);
@@ -89,7 +95,6 @@ public class Avatar {
         floor = myWorld[pos.x][pos.y];
         aP = pos;
         myWorld[pos.x][pos.y] = Tileset.AVATAR_DOWN_S;
-
     }
 
     /**
@@ -101,7 +106,7 @@ public class Avatar {
     }
     /**
      * if player has the key, enter the next floor
-     * */
+     *
     protected void nextF() throws IOException {
         if (hasKey) {
         Engine e = new Engine(name);
@@ -110,6 +115,7 @@ public class Avatar {
         hasKey = false;
         }
     }
+    */
     /**
      * animation for switch foor of avatar foot
      * */
